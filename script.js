@@ -6,7 +6,7 @@ class TerribleClickSpeedTest {
         this.moveInterval = null;
         this.currentMoveClass = '';
         this.clickTimes = []; // Array to store click timestamps
-        this.devMode = false; // Track if dev mode is active
+
         this.buttonSwapped = false; // Track if buttons have been swapped this game
         this.swapInProgress = false; // Track if swap is currently happening
         this.annoyingMessages = [
@@ -35,7 +35,7 @@ class TerribleClickSpeedTest {
         this.timerElement = document.getElementById('timer');
         this.annoyingMessageElement = document.getElementById('annoyingMessage');
         this.restartBtn = document.getElementById('restartBtn');
-        this.devBtn = document.getElementById('devBtn');
+
     }
     
     bindEvents() {
@@ -47,8 +47,7 @@ class TerribleClickSpeedTest {
         // Restart button
         this.restartBtn.addEventListener('click', () => this.resetGame());
         
-        // Dev button
-        this.devBtn.addEventListener('click', () => this.toggleDevMode());
+
         
         // Add some terrible mouse tracking
         document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
@@ -174,6 +173,11 @@ class TerribleClickSpeedTest {
             clearTimeout(this.gameEndTimer);
         }
         
+        // If buttons are still swapped, swap them back first
+        if (this.buttonSwapped && this.clickButton.style.position === 'fixed') {
+            this.swapButtonsBack();
+        }
+        
         // Reset button position to center
         const rect = this.gameArea.getBoundingClientRect();
         const buttonRect = this.clickButton.getBoundingClientRect();
@@ -260,8 +264,7 @@ class TerribleClickSpeedTest {
         // Double-check game state to prevent interference
         if (!this.gameRunning || this.startTime === 0) return;
         
-        // If dev mode is active, don't move the button
-        if (this.devMode) return;
+
         
         // If swap is in progress, don't move the button
         if (this.swapInProgress) return;
@@ -420,37 +423,7 @@ class TerribleClickSpeedTest {
         this.clickButton.style.transform = '';
     }
     
-    toggleDevMode() {
-        this.devMode = !this.devMode;
-        
-        if (this.devMode) {
-            // Dev mode activated - stop button movement
-            this.devBtn.textContent = 'Dev ON';
-            this.devBtn.classList.add('active');
-            this.stopButtonMovement();
-            
-            // Center the button
-            const rect = this.gameArea.getBoundingClientRect();
-            const buttonRect = this.clickButton.getBoundingClientRect();
-            
-            const centerX = (rect.width - buttonRect.width) / 2;
-            const centerY = (rect.height - buttonRect.height) / 2;
-            
-            this.clickButton.style.left = centerX + 'px';
-            this.clickButton.style.top = centerY + 'px';
-            this.clickButton.style.transform = '';
-            
-        } else {
-            // Dev mode deactivated - resume button movement
-            this.devBtn.textContent = 'Dev';
-            this.devBtn.classList.remove('active');
-            
-            // Only start movement if game is running
-            if (this.gameRunning) {
-                this.startButtonMovement();
-            }
-        }
-    }
+
     
     swapButtons() {
         // Set swap in progress flag to prevent movement
