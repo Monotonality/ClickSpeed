@@ -185,6 +185,33 @@ h1 {
     80% { transform: translate(200px, 50px); }
 }
 
+.decoy-button {
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    border: 2px solid #00b3b3;
+    color: #00b3b3;
+    opacity: 0.8;
+    transform: scale(0.95);
+    animation: decoyPulse 1s ease-in-out infinite alternate;
+}
+
+.decoy-button:hover {
+    background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+    border-color: #00cccc;
+    color: #00cccc;
+    transform: scale(1);
+}
+
+@keyframes decoyPulse {
+    0% {
+        opacity: 0.7;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     h1 {

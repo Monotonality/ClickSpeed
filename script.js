@@ -22,6 +22,9 @@ class TerribleClickSpeedTest {
             "Almost there... not! 😂"
         ];
         
+        this.decoyButtons = []; // Array to track multiple decoy buttons
+        this.decoyInterval = null;
+        
         this.initializeElements();
         this.bindEvents();
         this.setupButtonMovement();
@@ -91,6 +94,9 @@ class TerribleClickSpeedTest {
         // Change annoying message
         this.changeAnnoyingMessage();
         
+        // Spawn a decoy button on every click
+        this.spawnDecoyButton();
+        
         // Make button smaller temporarily
         this.clickButton.style.transform = 'scale(0.8)';
         setTimeout(() => {
@@ -152,6 +158,9 @@ class TerribleClickSpeedTest {
         
         // Add some terrible sound effects (if supported)
         this.playTerribleSound();
+
+        // Start decoy button spawning
+        this.startDecoySpawning();
     }
     
     endGame() {
@@ -172,6 +181,9 @@ class TerribleClickSpeedTest {
         if (this.gameEndTimer) {
             clearTimeout(this.gameEndTimer);
         }
+        
+        // Stop decoy spawning
+        this.stopDecoySpawning();
         
         // If buttons are still swapped, swap them back first
         if (this.buttonSwapped && this.clickButton.style.position === 'fixed') {
@@ -244,6 +256,9 @@ class TerribleClickSpeedTest {
         if (this.gameEndTimer) {
             clearTimeout(this.gameEndTimer);
         }
+        
+        // Stop decoy spawning
+        this.stopDecoySpawning();
         
         // Reset annoying message
         this.annoyingMessageElement.textContent = "Can't catch me! 😈";
@@ -595,6 +610,83 @@ class TerribleClickSpeedTest {
         this.clickButton.style.opacity = '1';
     }
     
+    startDecoySpawning() {
+        console.log('Starting decoy spawning...');
+        this.decoyInterval = setInterval(() => {
+            console.log('Decoy check - gameRunning:', this.gameRunning, 'random:', Math.random());
+            if (this.gameRunning && Math.random() < 0.3) { // 30% chance every interval
+                console.log('Spawning decoy button!');
+                this.spawnDecoyButton();
+            }
+        }, 2000); // Check every 2 seconds
+    }
+
+    stopDecoySpawning() {
+        console.log('Stopping decoy spawning...');
+        if (this.decoyInterval) {
+            clearInterval(this.decoyInterval);
+            this.decoyInterval = null;
+        }
+        
+        // Remove all existing decoy buttons
+        this.decoyButtons.forEach(button => {
+            if (button && button.parentNode) {
+                button.remove();
+            }
+        });
+        this.decoyButtons = [];
+    }
+
+    spawnDecoyButton() {
+        console.log('Spawning decoy button...');
+        
+        // Create decoy button
+        const decoyButton = document.createElement('button');
+        decoyButton.innerHTML = 'NOT THIS ONE';
+        decoyButton.className = 'click-button decoy-button';
+        decoyButton.style.position = 'absolute';
+        decoyButton.style.zIndex = '999';
+        
+        // Position it randomly in the game area
+        const gameRect = this.gameArea.getBoundingClientRect();
+        const buttonRect = this.clickButton.getBoundingClientRect();
+        
+        console.log('Game area rect:', gameRect);
+        console.log('Button rect:', buttonRect);
+        
+        const randomX = Math.random() * (gameRect.width - buttonRect.width);
+        const randomY = Math.random() * (gameRect.height - buttonRect.height);
+        
+        decoyButton.style.left = randomX + 'px';
+        decoyButton.style.top = randomY + 'px';
+        
+        // Add click event to remove it and spawn another one
+        decoyButton.addEventListener('click', () => {
+            // Remove this button from the array
+            const index = this.decoyButtons.indexOf(decoyButton);
+            if (index > -1) {
+                this.decoyButtons.splice(index, 1);
+            }
+            
+            // Remove from DOM
+            decoyButton.remove();
+            
+            // Spawn another decoy button when this one is clicked
+            if (this.gameRunning) {
+                this.spawnDecoyButton();
+            }
+        });
+        
+        // Add to game area
+        this.gameArea.appendChild(decoyButton);
+        
+        // Add to our tracking array
+        this.decoyButtons.push(decoyButton);
+        
+        console.log('Decoy button added to DOM, total decoys:', this.decoyButtons.length);
+        
+        // Decoy buttons will persist until game ends or new game starts
+    }
 
 }
 
