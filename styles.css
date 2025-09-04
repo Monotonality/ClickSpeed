@@ -1,0 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a1a;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: #ffffff;
+}
+
+
+
+.container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 40px;
+    text-align: center;
+}
+
+h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
+
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: #2d2d2d;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #404040;
+    min-width: 120px;
+}
+
+.label {
+    display: block;
+    font-weight: bold;
+    color: #cccccc;
+    font-size: 0.9rem;
+}
+
+.stat span:last-child {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4ecdc4;
+    margin-top: 5px;
+}
+
+.game-area {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #2d2d2d;
+    border: 2px solid #404040;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.click-button {
+    position: absolute;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+    font-weight: 500;
+    background: #4ecdc4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+
+
+.click-button:hover {
+    transform: translateY(-2px);
+    background: #3db8b0;
+    box-shadow: 0 6px 16px rgba(78, 205, 196, 0.5);
+}
+
+.click-button:active {
+    transform: scale(0.95);
+}
+
+
+
+.annoying-message {
+    font-size: 1.2rem;
+    color: #cccccc;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+.controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    margin: 0;
+    text-align: center;
+}
+
+.control-btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    background: #2d2d2d;
+    color: #ffffff;
+    border: 2px solid #4ecdc4;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.control-btn:hover {
+    background: #4ecdc4;
+    color: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+
+
+/* Button movement animations */
+.button-move-1 {
+    animation: move1 2s ease-in-out infinite;
+}
+
+.button-move-2 {
+    animation: move2 1.8s ease-in-out infinite;
+}
+
+.button-move-3 {
+    animation: move3 2.2s ease-in-out infinite;
+}
+
+@keyframes move1 {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(100px, -50px); }
+    50% { transform: translate(200px, 50px); }
+    75% { transform: translate(100px, 100px); }
+}
+
+@keyframes move2 {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(-150px, -100px); }
+    66% { transform: translate(150px, -150px); }
+}
+
+@keyframes move3 {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-100px, 100px); }
+    40% { transform: translate(100px, -100px); }
+    60% { transform: translate(-200px, -50px); }
+    80% { transform: translate(200px, 50px); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .stats {
+        gap: 20px;
+    }
+    
+    .stat {
+        min-width: 100px;
+        padding: 10px 15px;
+    }
+    
+    .game-area {
+        height: 300px;
+    }
+    
+    .click-button {
+        padding: 15px 30px;
+        font-size: 1.2rem;
+    }
+}
