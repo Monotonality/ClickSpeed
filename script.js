@@ -198,6 +198,16 @@ class TerribleClickSpeedTest {
     }
     
     resetGame() {
+        // If buttons are swapped and reset button is clicked, end the game first
+        if (this.buttonSwapped && this.clickButton.style.position === 'fixed') {
+            this.endGame();
+            // Reset buttons after 1 second
+            setTimeout(() => {
+                this.resetButtonsToOriginalPositions();
+            }, 1000);
+            return;
+        }
+        
         this.gameRunning = false;
         this.clickCount = 0;
         this.startTime = 0;
@@ -507,6 +517,51 @@ class TerribleClickSpeedTest {
         newRestartButton.className = 'control-btn';
         newRestartButton.id = 'restartBtn';
         
+        // Add buttons back to DOM - click button to game area, restart button to controls
+        this.gameArea.appendChild(newClickButton);
+        document.querySelector('.controls').appendChild(newRestartButton);
+        
+        // Update references
+        this.clickButton = newClickButton;
+        this.restartBtn = newRestartButton;
+        
+        // Re-bind events
+        this.clickButton.addEventListener('click', () => this.handleClick());
+        this.clickButton.addEventListener('dblclick', () => this.resetGame());
+        this.restartBtn.addEventListener('click', () => this.resetGame());
+        
+        // Setup click button position (center it) after a brief delay to ensure rendering
+        setTimeout(() => {
+            this.setupButtonMovement();
+        }, 10);
+        
+        // Clear swap in progress flag
+        this.swapInProgress = false;
+        
+        // Resume button movement if game is still running
+        if (this.gameRunning) {
+            this.startButtonMovement();
+        }
+    }
+    
+    resetButtonsToOriginalPositions() {
+        // Remove both buttons
+        this.clickButton.remove();
+        this.restartBtn.remove();
+        
+        // Create new click button back in center of game area
+        const newClickButton = document.createElement('button');
+        newClickButton.innerHTML = 'CLICK HERE!';
+        newClickButton.className = 'click-button';
+        newClickButton.id = 'clickButton';
+        newClickButton.style.position = 'absolute';
+        
+        // Create new restart button back in its original position (top-right)
+        const newRestartButton = document.createElement('button');
+        newRestartButton.innerHTML = 'Restart Game';
+        newRestartButton.className = 'control-btn';
+        newRestartButton.id = 'restartBtn';
+        
         // Add buttons back to DOM
         this.gameArea.appendChild(newClickButton);
         document.querySelector('.controls').appendChild(newRestartButton);
@@ -520,16 +575,24 @@ class TerribleClickSpeedTest {
         this.clickButton.addEventListener('dblclick', () => this.resetGame());
         this.restartBtn.addEventListener('click', () => this.resetGame());
         
-        // Setup click button position (center it) immediately
-        this.setupButtonMovement();
+        // Setup click button position (center it) after a brief delay to ensure rendering
+        setTimeout(() => {
+            this.setupButtonMovement();
+        }, 10);
         
-        // Clear swap in progress flag
+        // Reset game state
+        this.buttonSwapped = false;
         this.swapInProgress = false;
+        this.clickCount = 0;
+        this.startTime = 0;
+        this.gameRunning = false;
         
-        // Resume button movement if game is still running
-        if (this.gameRunning) {
-            this.startButtonMovement();
-        }
+        // Keep the final stats visible until new game starts
+        // Don't reset UI elements here - they'll be reset when handleClick() is called
+        
+        // Re-enable clicking
+        this.clickButton.style.pointerEvents = 'auto';
+        this.clickButton.style.opacity = '1';
     }
     
 

@@ -113,7 +113,7 @@ h1 {
 }
 
 .controls {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     margin: 0;
