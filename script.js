@@ -54,6 +54,9 @@ class TerribleClickSpeedTest {
         
         // Add some terrible mouse tracking
         document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        
+        // Add global click effect for any click on the page
+        document.addEventListener('click', (e) => this.handleGlobalClick(e));
     }
     
     handleClick() {
@@ -102,6 +105,11 @@ class TerribleClickSpeedTest {
         setTimeout(() => {
             this.clickButton.style.transform = '';
         }, 100);
+    }
+    
+    handleGlobalClick(e) {
+        // Show blue circle effect at any click location
+        this.addClickEffectAtPosition(e.clientX, e.clientY);
     }
     
     handleMouseMove(e) {
@@ -396,19 +404,59 @@ class TerribleClickSpeedTest {
         this.timerElement.textContent = elapsed.toFixed(2) + 's';
     }
     
-    addClickEffect() {
-        // Create a subtle click effect
+    addClickEffectAtPosition(clientX, clientY) {
+        // Create a smaller blue circle that rapidly reduces in radius at any screen position
         const effect = document.createElement('div');
-        effect.style.position = 'absolute';
-        effect.style.left = this.clickButton.offsetLeft + 'px';
-        effect.style.top = this.clickButton.offsetTop + 'px';
-        effect.style.width = '20px';
-        effect.style.height = '20px';
+        effect.style.position = 'fixed';
+        effect.style.left = (clientX - 15) + 'px'; // Start with 30px diameter (15px radius)
+        effect.style.top = (clientY - 15) + 'px';
+        effect.style.width = '30px';
+        effect.style.height = '30px';
         effect.style.borderRadius = '50%';
-        effect.style.backgroundColor = '#4ecdc4';
+        effect.style.backgroundColor = '#2196F3'; // Bright blue color
         effect.style.pointerEvents = 'none';
         effect.style.zIndex = '1000';
-        effect.style.animation = 'clickEffect 0.3s ease-out forwards';
+        effect.style.animation = 'blueCircleShrink 0.3s ease-out forwards';
+        
+        document.body.appendChild(effect);
+        
+        // Remove effect after animation
+        setTimeout(() => {
+            if (effect.parentNode) {
+                effect.parentNode.removeChild(effect);
+            }
+        }, 300);
+    }
+    
+    addClickEffect(clickedElement = null) {
+        // Get the click position relative to the game area
+        const gameRect = this.gameArea.getBoundingClientRect();
+        let centerX, centerY;
+        
+        if (clickedElement) {
+            // Use the clicked element's position
+            const elementRect = clickedElement.getBoundingClientRect();
+            centerX = elementRect.left - gameRect.left + elementRect.width / 2;
+            centerY = elementRect.top - gameRect.top + elementRect.height / 2;
+        } else {
+            // Default to button position
+            const buttonRect = this.clickButton.getBoundingClientRect();
+            centerX = buttonRect.left - gameRect.left + buttonRect.width / 2;
+            centerY = buttonRect.top - gameRect.top + buttonRect.height / 2;
+        }
+        
+        // Create a smaller blue circle that rapidly reduces in radius
+        const effect = document.createElement('div');
+        effect.style.position = 'absolute';
+        effect.style.left = (centerX - 15) + 'px'; // Start with 30px diameter (15px radius)
+        effect.style.top = (centerY - 15) + 'px';
+        effect.style.width = '30px';
+        effect.style.height = '30px';
+        effect.style.borderRadius = '50%';
+        effect.style.backgroundColor = '#2196F3'; // Bright blue color
+        effect.style.pointerEvents = 'none';
+        effect.style.zIndex = '1000';
+        effect.style.animation = 'blueCircleShrink 0.3s ease-out forwards';
         
         this.gameArea.appendChild(effect);
         
@@ -662,6 +710,9 @@ class TerribleClickSpeedTest {
         
         // Add click event to remove it and spawn another one
         decoyButton.addEventListener('click', () => {
+            // Add click effect for incorrect click
+            this.addClickEffect(decoyButton);
+            
             // Remove this button from the array
             const index = this.decoyButtons.indexOf(decoyButton);
             if (index > -1) {
@@ -700,6 +751,17 @@ style.textContent = `
         }
         100% {
             transform: scale(2) rotate(360deg);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes blueCircleShrink {
+        0% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(0);
             opacity: 0;
         }
     }
